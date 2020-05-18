@@ -1,0 +1,23 @@
+---
+
+- name: Create /data/
+  file:
+    path: "/data"
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+
+- name: Generate docker-compose.yml for WMS
+  template:
+    src: docker-compose.yml.j2
+    dest: "/data/docker-compose.yml"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Run `docker-compose up` 
+  docker_compose:
+    project_src: "/data"
+    build: no

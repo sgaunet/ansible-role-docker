@@ -1,0 +1,57 @@
+---
+
+- name : Install prerequisites for docker-ce
+  yum:
+    name: ['yum-utils','device-mapper-persistent-data','lvm2']
+    state: present
+    update_cache: yes
+
+- name: Download docker-ce.repo
+  get_url:
+    url: https://download.docker.com/linux/centos/docker-ce.repo
+    dest: /etc/yum.repos.d/docker-ce.repo
+    mode: '0755'
+    checksum: sha256:6650718e0fe5202ae7618521f695d43a8bc051c539d7570f0edbfa5b4916f218
+
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: present
+    update_cache: yes
+      
+- name: Install docker-ce
+  yum:
+    name: ['docker-ce','docker-ce-cli','containerd.io','gnupg2','python-pip']
+    state: present
+    update_cache: yes
+
+#  Install gnupg2 pass for docker login
+
+- name: restart docker-ce
+  systemd:
+    enabled: yes
+    state: started
+    daemon_reload: yes
+    name: docker
+
+- name: Update pip
+  pip:
+    name: pip
+    state: latest
+  
+- name: Install docker and six
+  pip:
+    name: ['docker','six']
+    state: present
+    
+- name: Install prerequisites for docker-compose (pip)
+  yum:
+    name: ['gcc','python-devel']
+    state: present
+      
+- name: Install docker-compose (with pip)
+  pip:
+    name: docker-compose
+    state: present
+
+
